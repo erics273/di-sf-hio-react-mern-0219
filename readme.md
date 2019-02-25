@@ -1,0 +1,2 @@
+# React Training with minor focus on MERN - Salesforce Hillsboro, OR
+This repo is meant to represent the curriculum to be delivered for a full-stack training focusing mainly on ReactJS. The course will be 5 days and also include a high level introduction to the Express framework and MongoDB. Including Express and MongoDB will enforce a high-level understanding of the MERN Stack.
