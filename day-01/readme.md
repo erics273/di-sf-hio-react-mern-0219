@@ -7,4 +7,4 @@ This day will cover what a Single Page Application is and introduce participants
 * Events and Event Handling
 
 ## LAB
-The lab will be in another repo
+[React Sports Game](https://github.com/erics273/di-sf-hio-react-basics-lab-sportsgame/)
