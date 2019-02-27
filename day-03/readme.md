@@ -4,4 +4,4 @@ Today we will focus on the following concepts:
 * Testing a react application
 
 ## LAB
-The lab will be in another repo
+[Redux and Testing Lab](https://github.com/erics273/di-sf-hio-react-lab-redux-jest)
