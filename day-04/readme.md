@@ -4,3 +4,4 @@ Today we will focus on the following concepts:
 * Express and MongoDB
 
 ## LAB
+Your lab is to create an express application with complete CRUD functionality against a subject matter of your choosing.
