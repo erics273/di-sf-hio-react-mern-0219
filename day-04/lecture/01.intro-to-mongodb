@@ -1,0 +1,267 @@
+# Mongo DB
+
+## NoSQL
+In order to understand and use MongoDB, it is important to understand what is referred to as NoSQL which as the name implies is not SQL. NoSQL does not adhere to the relational model and has no schema. It is driven by the needs of big data. As such, NoSQL databases tend to be scalable and distributed. This aspect is known as sharding.  
+So instead of rows, columns, and tables, NoSQL utilizes different models
+1.  Graph
+2.  Key Value
+3.  Wide Column
+4.  **Document**
+
+MongoDB uses the document paradigm. Data is stored as a document.  Within the document are fields. Documents that are stored together for a single purpose are collections. A MongoDB consists of one or more collections.
+
+There are two models for a Database
+1. Embedded or Denormalized documents
+2. Normalized documents
+
+Embedded documents work by taking a parent document like say a user and then embedding into that document sub-documents like contact information and shopping cart.
+
+Normalized documents orders documents to more closely mimic relational databases.  The parent document would have an ObjectID and that ObjectID would be referenced by the sub-documents.
+
+The embedded document would be easier to query and take less time to parse the data.  
+
+## Document Database
+
+Document Databases are ideal for applications where you need to store semi-structured records with a varying schema. Each record is typically stored as JSON or XML and allows for deep nesting and a handful of primitive value types. All the information is typically contained in a single record, instead of across multiple tables, AKA de-normalized.
+
+Examples:
+
+- MongoDB
+- Elasticsearch
+- Couchbase
+- RethinkDB
+
+# Graph Databases
+
+Graph Databases are best thought of as a hybrid between a relational database and document database where data is stored as nodes and relationships between nodes are stored as edges. The edges can contain metadata describing the link between two nodes. They lend themselves to efficiently storing social network and navigational data sets and quickly answering complex questions about them.
+
+Examples:
+
+- Neo4j
+- OrientDB
+- MarkLogic
+
+# Key-Value Databases
+
+Key-Value Databases are very basic and store flat data. They have little to no concept of tables or relations and provide only very basic query functionality limited to a single record represented by a string. They're ideal for caching, low-latency lookup, and basic counting/statistics.
+
+Examples:
+
+- Redis,
+- Memcached
+- Dynamo
+- Riak
+
+# Column-Oriented Databases
+
+Column-Oriented Databases are an idea for performing aggregate queries across very large data sets. The primary difference from a relational database is in how they store the data. A relational database stores records as rows, with each row taking a single line and having all its data in one line. A column-oriented database flattens the columns of each row, combining all matching column values into a single line with corresponding row numbers.
+
+Examples:
+
+- Amazon Redshift
+- Google BigQuery
+- Hypertable
+
+# What is MongoDB?
+
+MongoDB is a document database and is one of the most popular NoSQL databases based on usage. It started out as an internal product of 10gen, meant to power a platform as a service that the company was developing. In 2009 10gen made the pivot from a PaaS company to an open source software company, releasing MongoDB and charging for commercial support.
+
+- Started in 2007 by 10gen
+- Initial Release on February 11, 2009
+- Favored among frontend developers for its heavy use of JavaScript/JSON.
+- All records are stored in JSON format
+
+## Database Creation
+
+You can download tools like [mongodb compass](https://www.mongodb.com/download-center/compass?jmp=hero) to have a nice gui interface for working with MongoDB.
+
+Once installed it is only a matter of clicking on the create database button on compass. From there you only need to give it a name and also a name for the collection.
+
+While creating databases in Compass is nice, it would be better to use the mongo shell to learn how to manipulate the data. Also using the shell allows you to run scripts.
+
+To use the mongo shell, go to a terminal session and simply type `mongo`.  The mongod should be up and running as well in another terminal session. The cursor on the screen should look like this `>`. Type `help` and you should see a list of commands that can be used from the shell.
+
+To create a database
+
+```js
+use products;                               *creates DB
+db.computers.insertOne({computer_brand});   *inserts a product with a computer_brand
+```
+
+## Exercise 1: Inserting Documents
+
+For this exercise, we are going to learn about creating documents and storing them in MongoDB. In order to get started, we need to install MongoDB locally. Install the current stable community release by going to the [MongoDB Download Center](https://www.mongodb.com/download-center?jmp=nav#community), using Homebrew on MacOS is recommended.
+
+```
+brew update && brew install mongodb && brew services start mongodb
+```
+
+For this exercise, we will be using the mongo command line tool provided with MongoDB. This tool provides a live shell for interacting with MongoDB, simply typing mongo in your Terminal should start the shell.
+
+1. Type `mongo` into your shell and press `Enter`.
+2. Type `db` and the shell should return `test`. If this works, then you're good to go. If not, check your install for any errors and make sure the `mongod` process is running.
+3. You can type `show dbs` to see all databases available and their respective sizes in gigabytes.
+
+Next, we are going to create a new database and insert a single document into it. All commands should be given inside a live `mongo` shell environment unless otherwise noted.
+
+1. Run `use cookbookApp` to create a new database called `cookbookApp` and switch our shell to it.
+2. Run `db.recipes.insertOne( { name: 'Banana Pudding' } )`, you should see a JSON structure returned with `"acknowledged": true` in it.
+
+```
+> use cookbookApp
+> db.recipes.insertOne( { name: 'Banana Pudding' } )
+```
+
+<https://docs.mongodb.com/manual/reference/sql-comparison/>
+
+Congratulations, we've just created a new database, our first collection, and our first record in MongoDB. Wasn't that easy?
+
+Let's break down that second command.
+
+We used `db`. to tell the mongo shell that we want to perform an operation on our database. db is actually a JavaScript object, our mongo shell is really just a JavaScript REPL (read-eval-print-loop). You can type `typeof db` and see the response is object. This is just the console provided in your web browser's developer tools.
+
+Next, we have `recipes` which is the collection, or table in relational database terms, we want to insert our document into.
+
+Collections are simply properties of our database object and as long as the collection name doesn't conflict with an existing property or function of our database object, we can create one by calling `db.*collectionName*`.
+
+ Finally, we have the insertOne function instructs the database to insert a single JSON document into the recipes collection of our database.
+
+# On Your Own
+
+- Insert 3 more recipes with different names, adding an author property to each one.
+- Run db.recipes.count() after to confirm you have 4 recipes in your collection.
+- Use [db.collection.insertMany](https://docs.mongodb.com/manual/reference/method/db.collection.insertMany/#db.collection.insertMany) to insert 6 more recipes with name and author into your collection.
+
+## Making Queries
+The primary command is `db.<collection>.find()`.
+There is a variation `db.<collection>.findOne()` which of course returns a single result.
+`find()` takes two optional arguments: filter and projection.
+If neither is used the result will be all documents in the collection.
+The value returned by `find()` is not the result set itself but what is called a *cursor*.  This is an iteration which can be used to extract data. The shell will automatically iterate the cursor 20 times. If more are needed, you will be prompted `type "it" for more`.
+
+## Exercise 2: Querying Documents
+
+Now that we have some recipes in our database, let's learn about querying and pulling data out of our database. To start off, let's do something very basic, get all recipes in our database.
+
+```javascript
+db.recipes.find()
+```
+
+Run that in your mongo shell and you should get 10 lines back with a recipe on each line. Note: If your terminal is too narrow, recipes may wrap onto multiple lines. Increase the width of your shell and you should get 10 individual lines.
+
+Awesome, looks like MongoDB can perform the most essential functions of a database, store and retrieve data. Now let's try finding a single recipe by name. If you followed my original example for a recipe, you should be able to run:
+
+```
+db.recipes.findOne({ name: 'Banana Pudding' })
+```
+
+This will return a single result (or the first result if multiple match the criteria given) for a given query `{ name: 'Banana Pudding' }`. You see, everything in MongoDB is represented as JSON, even the queries
+
+1. Run `db.recipes.find({ author: { $exists: true } })` to get a list of all recipes that have an author.
+2. Run `db.recipes.find({ $or: [{ author: { $exists: true } }, { name: 'Banana Pudding' }] })` to get all recipes that have an author, or are named `Banana Pudding`.
+
+```
+> db.recipes.find({ author: { $exists: true } })
+> db.recipes.find({ $or: [{ author: { $exists: true } }, { name: 'Banana Pudding' }] })
+```
+
+As you can see, most SQL operators are supported in MongoDB, you just have to translate the SQL syntax to the JSON-friendly MongoDB syntax.
+
+At first the syntax seems needlessly complicated, but when you consider that most queries in a real-world application are build programmatically with the help of an ORM, you'll see how the JSON query style of MongoDB starts to make things easier. 
+
+Instead of complicated string concatenations and pseudo-arrays, you have real objects and arrays you can easily work with in your application's logic. Over time, you'll find things you would normally look to an ORM for, are supported natively by MongoDB. This is where the power lies, you no longer have to maintain one or more language-specific abstraction layers on top of your database.
+
+Let's insert a more complex document to test our some advanced query functionality. Run the following:
+
+```
+db.recipes.insertOne({
+  name: 'Road House Stir Fry',
+  author: {
+    name: 'Patrick Swayze',
+    email: 'pswayze@gmail.com'
+  },
+  ingredients: [
+    'Rice',
+    'Broccoli',
+    'Soy Sauce',
+    'Carrots',
+    'Garlic',
+    'Water Chestnuts',
+    'A Roundhouse Kick'
+  ],
+  averageCost: 12.83
+})
+```
+
+**Now try the following queries:**
+
+1. `db.recipes.find({ ingredients: { $all: ['Rice', 'Garlic'] } })`, this should return all recipes that include both Rice and Garlic as ingredients.
+2. `db.recipes.find({ 'author.name': 'Patrick Swayze' })`, which gives us all recipes where the author's name is Patrick Swayze. Nested properties can be searched using dot-notation.
+3. `db.recipes.find({ averageCost: { $lt: 20, $gt: 10 } })`, returns recipes that have an averageCost between 10 and 20.
+
+```
+> db.recipes.find({ ingredients: { $all: ['Rice', 'Garlic'] } })
+> db.recipes.find({ 'author.name': 'Patrick Swayze' })
+> db.recipes.find({ averageCost: { $lt: 20, $gt: 10 } })
+```
+
+## On Your Own
+
+- Insert 6 more recipes that include author name, author email, ingredients, and average cost similar to the last recipe we inserted.
+- Write 2 different queries that combine `$lt`, `$gt`, `$all`, or dot-notation operators with the `$and` and `$or` operators.
+
+## Exercise 3: Updating and Removing Documents
+
+Every record in MongoDB is assigned an `_id` property on creation.
+
+This ID uses a special type called `ObjectID` and contains a timestamp, machine identifier, process id, and a finally incrementing counter value started at a random value when the MongoDB process starts. Essentially a UUID, but with some special properties to make other database-related functions simpler.
+
+### Updating and Removing Documents
+
+Similarly to working with data in relational databases, when updating or removing specific documents, it is important to use the _id attribute to ensure you don't accidentally update, or worse, remove the wrong document. A basic update function looks like:
+
+```
+db.recipes.updateOne(
+	{ _id: new ObjectId('58d942c1e8de35e3647318c8') }, // Query
+	{ $set: { name: 'Banana Pudding Redux' } } // Update Operators
+)
+```
+
+### Updating and Removing Documents
+
+There are two primary arguments to the `updateOne` function.
+
+- The first is a query like the ones we wrote for the find function in the last exercise. This instructs MongoDB which documents we want to update.
+- The second argument is a set of instructions for how to update the document. There are many operators you can use here, but the primary one is `$set` which sets one or more properties of a document to a new value.  
+- Other useful operators include `$inc`, `$rename`, `$currentDate`, `$push`, and `$pop`. Each operator has a specific function or data-type it is used for.
+
+### Updating and Removing Documents
+
+Removing documents is very similar to finding documents:
+
+```
+db.recipes.deleteOne(
+	{ _id: new ObjectId('58d942c1e8de35e3647318c8') }
+)
+```
+
+As you can see, `deleteOne` only has one argument, a query. It's a good idea when testing or working on production systems to try every `updateOne`, `deleteOne`, `updateMany`, or `deleteMany` function using a `findOne` or `findMany` function first to ensure your query is selecting the correct documents. This helps avoid unfortunate mishaps and costly mistakes.
+
+### On Your Own
+
+- Read the [update operators](https://docs.mongodb.com/manual/reference/operator/update/) documentation and write an `updateMany`function to add a `lastUpdated` property to every document in your recipes collection.
+- Migrate all recipes in your collection that specify the author as a string `{ author: 'Patrick Swayze' }`, to the author object specification `{ author: { name: 'Patrick Swayze' } }`.
+  - Make use of the [$type](https://docs.mongodb.com/manual/reference/operator/query/type/) query operator to find these documents.
+  - You can complete this task using a single operation, but that is not a requirement. Multiple operations can also be used to migrate all your documents.
+
+### Design Patterns
+
+<https://docs.mongodb.com/manual/applications/data-models-relationships/>
+
+There are two thought processes to relationships in MongoDB. 
+
+1. Embedded
+   1. Typically better performance
+   2. Generally recommended for 1-1 patterns. 
+2. References
+   1. Easier to human read and write
